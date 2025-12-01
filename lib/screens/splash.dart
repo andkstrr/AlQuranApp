@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:al_quran_app/screens/home.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:flutter_svg/svg.dart';
@@ -29,6 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: SafeArea(
         child: Column(
           children: [
@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       width: 60,
                       height: 60,
                       colorFilter: ColorFilter.mode(
-                        Theme.of(context).colorScheme.secondary,
+                        Theme.of(context).colorScheme.onPrimary,
                         BlendMode.srcIn,
                       ),
                     ),
@@ -54,16 +54,16 @@ class _SplashScreenState extends State<SplashScreen> {
                       children: [
                         Text(
                           'Yuk Ngaji',
-                          style: GoogleFonts.inter(
+                          style: TextStyle(
                             fontSize: 30,
-                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
                         Text(
                           "#SempetinWaktuNgaji",
-                          style: GoogleFonts.inter(
+                          style: TextStyle(
                             fontSize: 15,
-                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
                       ],
@@ -75,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 50),
               child: LoadingAnimationWidget.horizontalRotatingDots(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).colorScheme.onPrimary,
                 size: 30,
               ),
             ),

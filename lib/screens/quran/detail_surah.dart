@@ -1,4 +1,4 @@
-import 'package:al_quran_app/model/detail_surah.dart';
+import 'package:al_quran_app/models/surah/detail_surah.dart';
 import 'package:al_quran_app/remote_resource.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';

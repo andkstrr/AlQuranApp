@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:al_quran_app/model/detail_surah.dart';
-import 'package:al_quran_app/model/surah.dart';
+import 'package:al_quran_app/models/surah/detail_surah.dart';
+import 'package:al_quran_app/models/surah/surah.dart';
 import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
 

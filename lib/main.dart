@@ -13,12 +13,12 @@ class AlQuranApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      TextTheme textTheme = createTextTheme(context, "Quicksand", "Quicksand");
+      TextTheme textTheme = createTextTheme(context, "Poppins", "Poppins");
       MaterialTheme theme = MaterialTheme(textTheme);
 
     return MaterialApp(
       title: 'Al-Qur\'an App',
-      theme: theme.dark(),
+      theme: theme.light(),
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
     );

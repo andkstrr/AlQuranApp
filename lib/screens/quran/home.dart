@@ -1,5 +1,5 @@
 import 'package:al_quran_app/remote_resource.dart';
-import 'package:al_quran_app/model/surah.dart';
+import 'package:al_quran_app/models/surah/surah.dart';
 import 'package:al_quran_app/screens/quran/detail_surah.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
