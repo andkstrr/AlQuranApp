@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ItemFeature extends StatelessWidget {
-  const ItemFeature({super.key,
+  const ItemFeature({
+    super.key,
+    required this.routeName,
     required this.icon,
     required this.label,
   });
 
+  final String routeName;
   final IconData icon;
   final String label;
 
@@ -21,17 +24,18 @@ class ItemFeature extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, routeName);
+            }, 
             icon: Icon(
               icon,
+              size: 28,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
         ),
         const SizedBox(height: 8),
-        Text(
-          label
-        ),
+        Text(label, style: TextStyle(fontSize: 13)),
       ],
     );
   }
