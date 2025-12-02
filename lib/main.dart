@@ -1,3 +1,4 @@
+import 'package:al_quran_app/screens/quran/quran.dart';
 import 'package:flutter/material.dart';
 import 'package:al_quran_app/utils/theme.dart';
 import 'package:al_quran_app/utils/util.dart';
@@ -20,7 +21,8 @@ class AlQuranApp extends StatelessWidget {
       title: 'Al-Qur\'an App',
       theme: theme.light(),
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      // home: SplashScreen(),
+      home: QuranScreen(),
     );
   }
 }

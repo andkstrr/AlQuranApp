@@ -38,6 +38,7 @@ class MaterialTheme {
 
       inverseSurface: Color(0xff2A2E2D),
       inversePrimary: Color(0xff34D8B4),
+
     );
   }
 
