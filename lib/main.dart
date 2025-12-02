@@ -19,7 +19,7 @@ class AlQuranApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Al-Qur\'an App',
-      theme: theme.light(),
+      theme: theme.dark(),
       debugShowCheckedModeBanner: false,
       // home: SplashScreen(),
       home: QuranScreen(),
