@@ -1,6 +1,6 @@
 import 'package:al_quran_app/remote_resource.dart';
 import 'package:al_quran_app/models/surah/surah.dart';
-import 'package:al_quran_app/screens/quran/detail_surah.dart';
+import 'package:al_quran_app/screens/quran/quran.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -40,7 +40,7 @@ class _HomeQuranScreenState extends State<HomeQuranScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: const Text('Al-Qur\'an'))),
+      appBar: AppBar(title: const Text('Al-Qur\'an'), centerTitle: true,),
       body: ListView.builder(
         itemCount: surahList.length,
         itemBuilder: (context, index) {
@@ -71,7 +71,10 @@ class _HomeQuranScreenState extends State<HomeQuranScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => DetailSurahScreen(id: surah.nomor ?? 0),
+              builder: (context) => QuranScreen(
+                surah: surah,
+                id: surah.nomor!,
+              ),
             ),
           );
         },
@@ -86,11 +89,13 @@ class _HomeQuranScreenState extends State<HomeQuranScreen> {
                 SvgPicture.asset(
                   'assets/icons/jewish-star.svg',
                   colorFilter: ColorFilter.mode(
-                    Theme.of(context).colorScheme.secondary,
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
                     BlendMode.srcIn,
                   ),
-                  width: 52,
-                  height: 52,
+                  width: 45,
+                  height: 45,
                 ),
                 Center(
                   child: Text(

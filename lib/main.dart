@@ -1,8 +1,7 @@
-import 'package:al_quran_app/screens/quran/quran.dart';
 import 'package:flutter/material.dart';
 import 'package:al_quran_app/utils/theme.dart';
 import 'package:al_quran_app/utils/util.dart';
-import 'package:al_quran_app/screens/splash.dart';
+import 'package:al_quran_app/routes/routes.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized(); // binding framework (asynchronous code before runApp)
@@ -19,10 +18,11 @@ class AlQuranApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Al-Qur\'an App',
-      theme: theme.dark(),
+      theme: theme.light(),
       debugShowCheckedModeBanner: false,
       // home: SplashScreen(),
-      home: QuranScreen(),
+      initialRoute: '/',
+      routes: appRoutes,
     );
   }
 }
