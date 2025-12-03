@@ -17,7 +17,7 @@ class MaterialTheme {
       secondary: Color(0xFFffffff), // accent fitur
       onSecondary: Color(0xffffffff),
 
-      secondaryContainer: Color(0xffDDF8F1), // surface fitur
+      secondaryContainer: Color(0xffffffff), // surface fitur
       onSecondaryContainer: Color(0xFF0E5948),
 
       tertiary: Color(0xff0877A5),

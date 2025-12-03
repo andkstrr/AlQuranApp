@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:html/parser.dart' as html_parser;
+import 'package:skeletonizer/skeletonizer.dart';
 
 class QuranScreen extends StatefulWidget {
   const QuranScreen({super.key, this.surah, this.id = 1});
@@ -31,6 +32,7 @@ class _QuranScreenState extends State<QuranScreen>
   TabController? _tabController;
   int? _loadingSurahId;
   bool _isLoadingAyat = false;
+  bool _isLoadingSkeleton = false;
 
   @override
   void initState() {
@@ -162,12 +164,14 @@ class _QuranScreenState extends State<QuranScreen>
     final isReady = surahList.isNotEmpty && _tabController != null;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
         leading: IconButton(
           icon: const Icon(Icons.arrow_left_rounded, size: 40),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Quran'),
+        title: Text('Quran'),
         centerTitle: true,
         actions: [
           IconButton(
@@ -184,7 +188,9 @@ class _QuranScreenState extends State<QuranScreen>
                   controller: _tabController,
                   isScrollable: true,
                   dividerColor: Colors.transparent,
-                  indicatorColor: Theme.of(context).colorScheme.primary,
+                  indicatorColor: Theme.of(context).brightness == Brightness.dark
+                      ? Color(0xFF13a893)
+                      : Color(0xff92bebc),
                   tabs: surahList.asMap().entries.map((entry) {
                     final index = entry.key;
                     final surah = entry.value;
@@ -227,14 +233,15 @@ class _QuranScreenState extends State<QuranScreen>
                       }
 
                       return SingleChildScrollView(
-                        padding: const EdgeInsets.only(bottom: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Container(
                               height: 50,
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).brightness == Brightness.dark
+                                  ? Color(0xFF13a893)
+                                  : Color(0xff92bebc)
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -415,69 +422,71 @@ class _QuranScreenState extends State<QuranScreen>
   }
 
   Widget cardAyat(Ayat ayat) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey[300]!, width: 1)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                SizedBox(
-                  width: 36,
-                  height: 36,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/jewish-star.svg',
-                        width: 36,
-                        height: 36,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                      Text(
-                        '${ayat.nomor}',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
+    return Skeletonizer(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.grey[300]!, width: 1)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  SizedBox(
+                    width: 36,
+                    height: 36,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icons/jewish-star.svg',
+                          width: 36,
+                          height: 36,
+                          color: Theme.of(context).brightness == Brightness.dark
+                            ? Color(0xff92bebc)
+                            : Color(0xFF13a893),
                         ),
-                      ),
-                    ],
+                        Text(
+                          '${ayat.nomor}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: Text(
-                      ayat.ar ?? '',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w500,
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: Text(
+                        ayat.ar ?? '',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 15),
-            Text(
-              _parseHtml(ayat.tr ?? ''),
-              style: TextStyle(
-                fontStyle: FontStyle.italic,
-                color: Colors.grey[600],
+                ],
               ),
-            ),
-            const SizedBox(height: 4),
-            Text('${ayat.idn}', style: TextStyle(fontWeight: FontWeight.w600)),
-          ],
+              const SizedBox(height: 15),
+              Text(
+                _parseHtml(ayat.tr ?? ''),
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  color: Colors.grey[600],
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text('${ayat.idn}', style: TextStyle(fontWeight: FontWeight.w600)),
+            ],
+          ),
         ),
       ),
     );
