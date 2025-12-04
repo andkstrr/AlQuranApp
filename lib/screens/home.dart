@@ -7,6 +7,7 @@ import 'package:al_quran_app/models/prayer/prayer_time.dart';
 import 'package:al_quran_app/services/location.dart';
 import 'package:al_quran_app/services/prayer.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -58,8 +59,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     for (var t in times) {
       final hhmm = t["time"].split(":");
-      final dt = DateTime(today.year, today.month, today.day,
-          int.parse(hhmm[0]), int.parse(hhmm[1]));
+      final dt = DateTime(
+        today.year,
+        today.month,
+        today.day,
+        int.parse(hhmm[0]),
+        int.parse(hhmm[1]),
+      );
 
       if (dt.isAfter(now)) {
         nextPrayerTime = dt;
@@ -114,7 +120,10 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 15,
+                ),
                 child: Column(
                   children: [
                     Row(
@@ -180,16 +189,37 @@ class _HomeScreenState extends State<HomeScreen> {
                     GridView(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 5,
-                        childAspectRatio: 0.9,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 5,
+                            childAspectRatio: 0.9,
+                          ),
                       children: [
-                        ItemPrayer(label: 'Shubuh', icon: LucideIcons.moon, time: prayerTime?.fajr ?? "--:--"),
-                        ItemPrayer(label: 'Dzuhur', icon: LucideIcons.sun, time: prayerTime?.dhuhr ?? "--:--"),
-                        ItemPrayer(label: 'Ashar', icon: LucideIcons.cloudSun, time: prayerTime?.asr ?? "--:--"),
-                        ItemPrayer(label: 'Maghrib', icon: LucideIcons.sunset, time: prayerTime?.maghrib ?? "--:--"),
-                        ItemPrayer(label: "Isya'", icon: LucideIcons.moonStar, time: prayerTime?.isha ?? "--:--"),
+                        ItemPrayer(
+                          label: 'Shubuh',
+                          icon: LucideIcons.moon,
+                          time: prayerTime?.fajr ?? "--:--",
+                        ),
+                        ItemPrayer(
+                          label: 'Dzuhur',
+                          icon: LucideIcons.sun,
+                          time: prayerTime?.dhuhr ?? "--:--",
+                        ),
+                        ItemPrayer(
+                          label: 'Ashar',
+                          icon: LucideIcons.cloudSun,
+                          time: prayerTime?.asr ?? "--:--",
+                        ),
+                        ItemPrayer(
+                          label: 'Maghrib',
+                          icon: LucideIcons.sunset,
+                          time: prayerTime?.maghrib ?? "--:--",
+                        ),
+                        ItemPrayer(
+                          label: "Isya'",
+                          icon: LucideIcons.moonStar,
+                          time: prayerTime?.isha ?? "--:--",
+                        ),
                       ],
                     ),
                   ],
@@ -200,40 +230,81 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
                   color: Theme.of(context).colorScheme.secondaryContainer,
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 20,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Semua Fitur",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                      Text(
+                        "Semua Fitur",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       const SizedBox(height: 15),
                       GridView(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 5,
-                          childAspectRatio: 0.7,
-                          crossAxisSpacing: 10,
-                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 5,
+                              childAspectRatio: 0.7,
+                              crossAxisSpacing: 10,
+                            ),
                         children: [
-                          ItemFeature(routeName: "/quran", icon: LucideIcons.bookOpen, label: "Quran"),
-                          ItemFeature(routeName: "/adzan", icon: LucideIcons.volume2, label: "Adzan"),
-                          ItemFeature(routeName: "/qibla", icon: LucideIcons.compass, label: "Qibla"),
-                          ItemFeature(routeName: "/donation", icon: LucideIcons.heart, label: "Donation"),
-                          ItemFeature(routeName: "/all-features", icon: LucideIcons.layoutDashboard, label: "All"),
+                          ItemFeature(
+                            routeName: "/quran",
+                            icon: LucideIcons.bookOpen,
+                            label: "Quran",
+                          ),
+                          ItemFeature(
+                            routeName: "/adzan",
+                            icon: LucideIcons.volume2,
+                            label: "Adzan",
+                          ),
+                          ItemFeature(
+                            routeName: "/qibla",
+                            icon: LucideIcons.compass,
+                            label: "Qibla",
+                          ),
+                          ItemFeature(
+                            routeName: "/donation",
+                            icon: LucideIcons.heart,
+                            label: "Donation",
+                          ),
+                          ItemFeature(
+                            routeName: "/all-features",
+                            icon: LucideIcons.layoutDashboard,
+                            label: "All",
+                          ),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Ngaji Online",
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-                          Text("Lihat Semua",
-                              style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.primary)),
+                          Text(
+                            "Ngaji Online",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            "Lihat Semua",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 15),
@@ -241,25 +312,76 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 320,
                         child: ListView(
                           scrollDirection: Axis.horizontal,
-                          children: const [
-                            ItemRecitation(
-                              imageUrl: 'https://www.goersapp.com/blog/wp-content/uploads/2024/02/Jadwal-Kajian-Ustadz-Hanan-Attaki-Maret-2024.jpg',
+                          children: [
+                            YoutubePlayerBuilder(
+                              player: YoutubePlayer(
+                                controller: YoutubePlayerController(
+                                  initialVideoId:
+                                      'sX-kePnlgy4', // ID video YouTube
+                                  flags: const YoutubePlayerFlags(
+                                    autoPlay: false,
+                                    mute: false,
+                                  ),
+                                ),
+                                showVideoProgressIndicator: true,
+                                progressIndicatorColor: Colors.blueAccent,
+                              ),
+                              builder: (context, player) => Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 300,
+                                    height: 200,
+                                    child: player,
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    'Menata Hati ala Ustadz Hanan Attaki',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Ustadz Hanan Attaki',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    '1.2M views • 2 hours ago',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const ItemRecitation(
+                              imageUrl:
+                                  'https://www.goersapp.com/blog/wp-content/uploads/2024/02/Jadwal-Kajian-Ustadz-Hanan-Attaki-Maret-2024.jpg',
                               title: 'Menata Hati ala Ustadz Hanan Attaki',
                               channel: 'Ustadz Hanan Attaki',
                               views: '1.2M views',
                               time: '2 hours ago',
                             ),
-                            SizedBox(width: 15),
-                            ItemRecitation(
-                              imageUrl: 'https://imgsrv2.voi.id/SHaosPENG8ABKPTRlEmR0hoAdSpDY_Ck-DRc1_5zmSk/auto/1200/675/sm/1/bG9jYWw6Ly8vcHVibGlzaGVycy80NDE0MTQvMjAyNDEyMTAxMjMwLW1haW4uanBlZw.jpg',
-                              title: 'Setinggi Apa Iman Kita, Disitulah Kebahagiaan Kita Berada',
+                            const SizedBox(width: 15),
+                            const ItemRecitation(
+                              imageUrl:
+                                  'https://imgsrv2.voi.id/SHaosPENG8ABKPTRlEmR0hoAdSpDY_Ck-DRc1_5zmSk/auto/1200/675/sm/1/bG9jYWw6Ly8vcHVibGlzaGVycy80NDE0MTQvMjAyNDEyMTAxMjMwLW1haW4uanBlZw.jpg',
+                              title:
+                                  'Setinggi Apa Iman Kita, Disitulah Kebahagiaan Kita Berada',
                               channel: 'Ustadz Adi Hidayat',
                               views: '1.2M views',
                               time: '2 hours ago',
                             ),
-                            SizedBox(width: 15),
-                            ItemRecitation(
-                              imageUrl: 'https://img.okezone.com/content/2023/01/14/621/2746139/ustadz-felix-siauw-ungkap-perjalanan-menemukan-tuhan-bermula-belajar-sains-hingga-keajaiban-alquran-aDvQMgNYTM.jpg',
+                            const SizedBox(width: 15),
+                            const ItemRecitation(
+                              imageUrl:
+                                  'https://img.okezone.com/content/2023/01/14/621/2746139/ustadz-felix-siauw-ungkap-perjalanan-menemukan-tuhan-bermula-belajar-sains-hingga-keajaiban-alquran-aDvQMgNYTM.jpg',
                               title: 'Menemukan Keindahan Islam',
                               channel: 'Ustadz Felix Siauw',
                               views: '1.2M views',

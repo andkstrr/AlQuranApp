@@ -15,6 +15,7 @@ class HomeQuranScreen extends StatefulWidget {
 class _HomeQuranScreenState extends State<HomeQuranScreen> {
   final remoteResource = RemoteResource();
   final List<SurahModel> surahList = [];
+  bool isSearching = false;
 
   bool isLoading = false;
 
@@ -49,21 +50,119 @@ class _HomeQuranScreenState extends State<HomeQuranScreen> {
     );
   }
 
+  void toggleSearch() {
+    setState(() {
+      isSearching = !isSearching;
+    });
+    clearSearch();
+  }
+
+  final List<SurahModel> _originalSurah = [];
+
+  void _searchSurah(String query) {
+    final searchLower = query.trim().toLowerCase();
+
+    if (searchLower.isEmpty) {
+      if (_originalSurah.isNotEmpty) {
+        setState(() {
+          surahList
+            ..clear()
+            ..addAll(_originalSurah);
+          _originalSurah.clear();
+        });
+      }
+      return;
+    }
+
+    if (_originalSurah.isEmpty) {
+      _originalSurah.addAll(surahList);
+    }
+
+    final filtered = _originalSurah.where((surah) {
+      final namaSuratLower = surah.nama?.toLowerCase() ?? '';
+      final namaLatinLower = surah.namaLatin?.toLowerCase() ?? '';
+      return namaSuratLower.contains(searchLower) ||
+          namaLatinLower.contains(searchLower);
+    }).toList();
+
+    setState(() {
+      surahList
+        ..clear()
+        ..addAll(filtered);
+    });
+  }
+
+  void clearSearch() {
+    _searchSurah('');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       appBar: AppBar(
-        title: const Text('Yuk Ngaji'),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_left_rounded, size: 40),
-          onPressed: () => Navigator.pop(context),
+        title: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          switchInCurve: Curves.easeOut,
+          switchOutCurve: Curves.easeIn,
+          transitionBuilder: (child, animation) {
+            final offsetAnimation = Tween<Offset>(
+              begin: const Offset(0, -0.3),
+              end: Offset.zero,
+            ).animate(animation);
+            return SlideTransition(
+              position: offsetAnimation,
+              child: FadeTransition(opacity: animation, child: child),
+            );
+          },
+          child: isSearching
+              ? SizedBox(
+                  height: 44,
+                  child: TextFormField(
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: 'Cari surah...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                      visualDensity: VisualDensity.compact,
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      filled: true,
+                      fillColor: Theme.of(context).colorScheme.primary,
+                    ),
+                    style: const TextStyle(fontSize: 16),
+                    onChanged: (value) {
+                      _searchSurah(value);
+                    },
+                  ),
+                )
+              : const Text('Yuk Ngaji', key: ValueKey('titleText')),
         ),
+        centerTitle: true,
+        leading: !isSearching
+            ? IconButton(
+                icon: const Icon(Icons.arrow_left_rounded, size: 40),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+            : null,
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search, size: 30),
-            onPressed: () {},
+            icon: Icon(isSearching ? Icons.close : Icons.search, size: 30),
+            onPressed: () {
+              toggleSearch();
+            },
           ),
         ],
         backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
@@ -131,8 +230,10 @@ class _HomeQuranScreenState extends State<HomeQuranScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  QuranScreen(surah: surah, id: surah.nomor!),
+                              builder: (context) => QuranScreen(
+                                surahList: surahList,
+                                id: surah.nomor!,
+                              ),
                             ),
                           );
                         },

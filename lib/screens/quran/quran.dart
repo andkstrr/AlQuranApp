@@ -10,9 +10,10 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:skeletonizer/skeletonizer.dart';
 
 class QuranScreen extends StatefulWidget {
-  const QuranScreen({super.key, this.surah, this.id = 1});
+  const QuranScreen({super.key, this.surah, this.id = 1, this.surahList});
 
   final SurahModel? surah;
+  final List<SurahModel>? surahList;
   final int? id;
 
   @override
@@ -22,7 +23,7 @@ class QuranScreen extends StatefulWidget {
 class _QuranScreenState extends State<QuranScreen>
     with SingleTickerProviderStateMixin {
   final remoteResource = RemoteResource();
-  final List<SurahModel> surahList = [];
+  List<SurahModel> get surahList => widget.surahList ?? [];
   final Map<int, List<Ayat>> _ayatCache = {};
   final Map<int, SurahModel> _surahCache = {};
   final Map<int, DetailSurahModel> _detailSurahCache = {};
@@ -34,11 +35,43 @@ class _QuranScreenState extends State<QuranScreen>
   bool _isLoadingAyat = false;
   bool _isLoadingSkeleton = false;
 
+  List<Ayat> dummyAyat = List.generate(
+    5,
+    (index) => Ayat(
+      nomor: index + 1,
+      ar: 'آية ${index + 1}', // Teks Arab dummy
+      tr: 'Transliterasi Ayat ${index + 1}', // Transliterasi dummy
+      idn: 'Terjemahan Ayat ${index + 1}', // Terjemahan dummy
+    ),
+  );
+
   @override
   void initState() {
     super.initState();
     player = AudioPlayer();
-    fetchSurah();
+
+    if (widget.surahList != null && widget.surahList!.isNotEmpty) {
+      final sortedSurah = List<SurahModel>.from(widget.surahList!)
+        ..sort((a, b) => (b.nomor ?? 0).compareTo(a.nomor ?? 0));
+
+      setState(() {
+        surahList
+          ..clear()
+          ..addAll(sortedSurah);
+      });
+
+      final preferredId =
+          widget.id ?? widget.surah?.nomor ?? surahList.first.nomor ?? 1;
+      final initialIndex = surahList.indexWhere(
+        (element) => element.nomor == preferredId,
+      );
+      _initTabController(initialIndex >= 0 ? initialIndex : 0);
+
+      final targetId =
+          surahList[_tabController!.index].nomor ?? surahList.first.nomor!;
+      _loadSurah(targetId);
+      return;
+    }
   }
 
   @override
@@ -80,6 +113,17 @@ class _QuranScreenState extends State<QuranScreen>
   }
 
   Future<void> fetchSurah() async {
+    if (widget.surahList != null && widget.surahList!.isNotEmpty) {
+      setState(() {
+        final sortedSurah = List<SurahModel>.from(widget.surahList!)
+          ..sort((a, b) => (b.nomor ?? 0).compareTo(a.nomor ?? 0));
+        surahList
+          ..clear()
+          ..addAll(sortedSurah);
+      });
+      return;
+    }
+
     final result = await remoteResource.fetchQuran();
     result.fold(
       (error) => ScaffoldMessenger.of(
@@ -188,7 +232,8 @@ class _QuranScreenState extends State<QuranScreen>
                   controller: _tabController,
                   isScrollable: true,
                   dividerColor: Colors.transparent,
-                  indicatorColor: Theme.of(context).brightness == Brightness.dark
+                  indicatorColor:
+                      Theme.of(context).brightness == Brightness.dark
                       ? Color(0xFF13a893)
                       : Color(0xff92bebc),
                   tabs: surahList.asMap().entries.map((entry) {
@@ -200,12 +245,13 @@ class _QuranScreenState extends State<QuranScreen>
                         surah.namaLatin ?? 'Surah',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: isActive
-                            ? (Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black)
-                            : Colors.grey,
-                          fontWeight:
-                            isActive ? FontWeight.w600 : FontWeight.w400,
+                              ? (Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black)
+                              : Colors.grey,
+                          fontWeight: isActive
+                              ? FontWeight.w600
+                              : FontWeight.w400,
                         ),
                       ),
                     );
@@ -222,65 +268,66 @@ class _QuranScreenState extends State<QuranScreen>
                       }
 
                       final ayat = _ayatCache[surahId] ?? <Ayat>[];
-                      if (ayat.isEmpty) {
-                        final isLoadingThisTab =
-                            _isLoadingAyat && _loadingSurahId == surahId;
-                        return Center(
-                          child: isLoadingThisTab
-                              ? const CircularProgressIndicator()
-                              : const Text('Belum ada data'),
-                        );
-                      }
+                      final isLoadingThisTab =
+                          _isLoadingAyat && _loadingSurahId == surahId;
 
-                      return SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).brightness == Brightness.dark
-                                  ? Color(0xFF13a893)
-                                  : Color(0xff92bebc)
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
+                      return Skeletonizer(
+                        enabled: isLoadingThisTab,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Color(0xFF13a893)
+                                      : Color(0xff92bebc),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      surah.namaLatin ?? '',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        surah.namaLatin ?? '',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      '${detailSurah.jumlahAyat ?? 0} Ayat, ${detailSurah.tempatTurun ?? ''}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
+                                      Text(
+                                        '${detailSurah.jumlahAyat ?? 0} Ayat, ${detailSurah.tempatTurun ?? ''}',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 16),
-                            if (surahId != 1 && surahId != 9)
-                              const Text(
-                                'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 24),
+                              const SizedBox(height: 16),
+                              if (surahId != 1 && surahId != 9)
+                                const Text(
+                                  'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                              const SizedBox(height: 12),
+                              ...(isLoadingThisTab ? dummyAyat : ayat).map(
+                                (item) => cardAyat(item),
                               ),
-                            const SizedBox(height: 12),
-                            ...ayat.map((item) => cardAyat(item)),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     }).toList(),
@@ -422,71 +469,69 @@ class _QuranScreenState extends State<QuranScreen>
   }
 
   Widget cardAyat(Ayat ayat) {
-    return Skeletonizer(
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.grey[300]!, width: 1)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  SizedBox(
-                    width: 36,
-                    height: 36,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/jewish-star.svg',
-                          width: 36,
-                          height: 36,
-                          color: Theme.of(context).brightness == Brightness.dark
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.grey[300]!, width: 1)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                SizedBox(
+                  width: 36,
+                  height: 36,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/jewish-star.svg',
+                        width: 36,
+                        height: 36,
+                        color: Theme.of(context).brightness == Brightness.dark
                             ? Color(0xff92bebc)
                             : Color(0xFF13a893),
-                        ),
-                        Text(
-                          '${ayat.nomor}',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Text(
-                        ayat.ar ?? '',
+                      ),
+                      Text(
+                        '${ayat.nomor}',
                         style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Text(
+                      ayat.ar ?? '',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 15),
-              Text(
-                _parseHtml(ayat.tr ?? ''),
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  color: Colors.grey[600],
                 ),
+              ],
+            ),
+            const SizedBox(height: 15),
+            Text(
+              _parseHtml(ayat.tr ?? ''),
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+                color: Colors.grey[600],
               ),
-              const SizedBox(height: 4),
-              Text('${ayat.idn}', style: TextStyle(fontWeight: FontWeight.w600)),
-            ],
-          ),
+            ),
+            const SizedBox(height: 4),
+            Text('${ayat.idn}', style: TextStyle(fontWeight: FontWeight.w600)),
+          ],
         ),
       ),
     );
