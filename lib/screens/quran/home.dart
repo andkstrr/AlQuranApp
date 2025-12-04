@@ -231,7 +231,9 @@ class _HomeQuranScreenState extends State<HomeQuranScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => QuranScreen(
-                                surahList: surahList,
+                                surahList: _originalSurah.isNotEmpty
+                                    ? _originalSurah
+                                    : surahList,
                                 id: surah.nomor!,
                               ),
                             ),
