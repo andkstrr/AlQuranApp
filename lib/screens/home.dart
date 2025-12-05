@@ -8,6 +8,7 @@ import 'package:al_quran_app/services/location.dart';
 import 'package:al_quran_app/services/prayer.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:al_quran_app/main.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -151,12 +152,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            LucideIcons.bell,
-                            size: 28,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
+                          onPressed: () {
+                            isDarkMode.value = !isDarkMode.value;
+                          },
+                          icon: Theme.of(context).brightness == Brightness.dark
+                              ? Icon(
+                                  LucideIcons.moon,
+                                  size: 28,
+                                  color: Theme.of(context).colorScheme.onPrimary,
+                                )
+                              : Icon(
+                                  LucideIcons.sun, 
+                                  size: 28,
+                                  color: Theme.of(context).colorScheme.onPrimary,
+                              ),
                         ),
                       ],
                     ),
