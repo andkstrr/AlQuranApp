@@ -8,7 +8,7 @@ class MaterialTheme {
   static ColorScheme lightScheme() {
     return const ColorScheme(
       brightness: Brightness.light,
-      primary: Color(0xFF13a893), // hijau turquoise utama
+      primary: Color(0xFF244e4d), // hijau turquoise utama
       surfaceTint: Color(0xFF0A9E7C),
       onPrimary: Color(0xffffffff),
       primaryContainer: Color(0xFF13B89A),

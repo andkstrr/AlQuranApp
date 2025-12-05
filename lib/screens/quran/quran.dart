@@ -231,11 +231,8 @@ class _QuranScreenState extends State<QuranScreen>
                 TabBar(
                   controller: _tabController,
                   isScrollable: true,
-                  dividerColor: Colors.transparent,
-                  indicatorColor:
-                      Theme.of(context).brightness == Brightness.dark
-                      ? Color(0xFF13a893)
-                      : Color(0xff92bebc),
+                  dividerColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
+                  indicatorColor: Color(0xff244e4d),
                   tabs: surahList.asMap().entries.map((entry) {
                     final index = entry.key;
                     final surah = entry.value;
@@ -257,7 +254,6 @@ class _QuranScreenState extends State<QuranScreen>
                     );
                   }).toList(),
                 ),
-                const SizedBox(height: 12),
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
@@ -280,11 +276,7 @@ class _QuranScreenState extends State<QuranScreen>
                               Container(
                                 height: 50,
                                 decoration: BoxDecoration(
-                                  color:
-                                      Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Color(0xFF13a893)
-                                      : Color(0xff92bebc),
+                                  color: Color(0xff244e4d),
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -338,7 +330,7 @@ class _QuranScreenState extends State<QuranScreen>
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1)),
+          border: Border(top: BorderSide(color: Colors.grey[600]!, width: 1)),
         ),
         child: SafeArea(
           child: Column(
@@ -471,7 +463,7 @@ class _QuranScreenState extends State<QuranScreen>
   Widget cardAyat(Ayat ayat) {
     return Container(
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey[300]!, width: 1)),
+        border: Border(bottom: BorderSide(color: Theme.brightnessOf(context) == Brightness.dark ? Colors.grey[800]! : Colors.grey[300]!, width: 1)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(15),
@@ -492,9 +484,7 @@ class _QuranScreenState extends State<QuranScreen>
                         'assets/icons/jewish-star.svg',
                         width: 36,
                         height: 36,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Color(0xff92bebc)
-                            : Color(0xFF13a893),
+                        color: Color(0xFF244e4d),
                       ),
                       Text(
                         '${ayat.nomor}',
@@ -526,7 +516,9 @@ class _QuranScreenState extends State<QuranScreen>
               _parseHtml(ayat.tr ?? ''),
               style: TextStyle(
                 fontStyle: FontStyle.italic,
-                color: Colors.grey[600],
+                color: Theme.of(context).brightness == Brightness.dark 
+                ? Colors.grey[500]
+                : Colors.grey[600],
               ),
             ),
             const SizedBox(height: 4),
