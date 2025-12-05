@@ -157,12 +157,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           icon: Theme.of(context).brightness == Brightness.dark
                               ? Icon(
-                                  LucideIcons.moon,
+                                  LucideIcons.sun,
                                   size: 28,
                                   color: Theme.of(context).colorScheme.onPrimary,
                                 )
                               : Icon(
-                                  LucideIcons.sun, 
+                                  LucideIcons.moon, 
                                   size: 28,
                                   color: Theme.of(context).colorScheme.onPrimary,
                               ),
